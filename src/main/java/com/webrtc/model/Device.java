@@ -1,6 +1,7 @@
 package com.webrtc.model;
 
 import lombok.*;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -8,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @Document(collection = "devices")
 public class Device {
-    private String id;
-    private String name;
-    private String ip;
+    @Indexed
+    private String deviceId;
+    private DeviceDetails deviceDetails;
 }

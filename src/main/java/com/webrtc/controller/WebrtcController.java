@@ -2,8 +2,8 @@ package com.webrtc.controller;
 
 import com.webrtc.model.Device;
 import com.webrtc.repository.DeviceRepository;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +23,7 @@ public class WebrtcController {
         return ResponseEntity.ok(device);
     }
 
-    @GetMapping("/device")
+    @GetMapping("/devices")
     public ResponseEntity<?> getAllDevices() {
         List<Device> devices = deviceRepository.findAll();
         return ResponseEntity.ok(devices);
@@ -31,7 +31,10 @@ public class WebrtcController {
 
     @GetMapping("/device/{deviceid}")
     public ResponseEntity<?> getDeviceById(@PathVariable("deviceid")String deviceid) {
-        Optional<Device> device = deviceRepository.findById(deviceid);
-        return ResponseEntity.ok(device.get());
+        Optional<Device> device = deviceRepository.findOne(Example.of(new Device(deviceid, null)));
+        if(device.isPresent()) {
+            return ResponseEntity.ok(device.get());
+        }
+        return ResponseEntity.ok("Device not found");
     }
 }

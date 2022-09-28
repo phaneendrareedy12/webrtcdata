@@ -1,13 +1,11 @@
 package com.webrtc.controller;
 
 import com.webrtc.model.Device;
-import com.webrtc.repository.DeviceRepository;
+import com.webrtc.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -15,23 +13,21 @@ import java.util.Optional;
 public class WebrtcController {
 
     @Autowired
-    private DeviceRepository deviceRepository;
+    private DeviceService deviceService;
 
     @PostMapping("/device")
     public ResponseEntity<?> addDevice(@RequestBody Device device) {
-        deviceRepository.save(device);
-        return ResponseEntity.ok(device);
+        return ResponseEntity.ok(deviceService.addDevice(device));
     }
 
     @GetMapping("/devices")
     public ResponseEntity<?> getAllDevices() {
-        List<Device> devices = deviceRepository.findAll();
-        return ResponseEntity.ok(devices);
+        return ResponseEntity.ok(deviceService.findAll());
     }
 
     @GetMapping("/device/{deviceid}")
     public ResponseEntity<?> getDeviceById(@PathVariable("deviceid")String deviceid) {
-        Optional<Device> device = deviceRepository.findOne(Example.of(new Device(deviceid, null)));
+        Optional<Device> device = deviceService.findById(deviceid);
         if(device.isPresent()) {
             return ResponseEntity.ok(device.get());
         }

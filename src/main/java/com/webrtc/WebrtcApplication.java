@@ -15,9 +15,6 @@ public class WebrtcApplication {
 	private static final String MONGO_DB_URI_PROPERTY = "spring.data.mongodb.uri";
 	private static final String FILE_PATH = "D:\\mongo_db_connection_str.txt";
 
-	@Autowired
-	private static Environment env;
-
 	public static void main(String[] args) {
 
 		String mongoDbConnstr = getMongoDBconnectionString();

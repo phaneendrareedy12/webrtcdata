@@ -3,6 +3,7 @@ package com.webrtc.controller;
 import com.webrtc.model.Device;
 import com.webrtc.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,11 +27,9 @@ public class WebrtcController {
     }
 
     @GetMapping("/device/{deviceid}")
-    public ResponseEntity<?> getDeviceById(@PathVariable("deviceid")String deviceid) {
-        Optional<Device> device = deviceService.findById(deviceid);
-        if(device.isPresent()) {
-            return ResponseEntity.ok(device.get());
-        }
-        return ResponseEntity.ok("Device not found");
+    public ResponseEntity<?> getDeviceById(@PathVariable("deviceid") String deviceid) {
+        return ResponseEntity.ok(deviceService.findById(deviceid));
+        //Optional<Device> device = deviceService.findById(deviceid);
+        //return device.isPresent() ? ResponseEntity.ok(device.get()) : ResponseEntity.ok("Device id not found");
     }
 }

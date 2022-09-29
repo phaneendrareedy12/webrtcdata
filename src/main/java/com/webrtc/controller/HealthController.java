@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/webrtc")
-public class HealthConntroller {
+public class HealthController {
 
     @GetMapping("/health")
     public ResponseEntity<?> getHealth() {

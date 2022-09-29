@@ -1,9 +1,9 @@
 package com.webrtc.service;
 
+import com.webrtc.exception.DeviceNotFoundException;
 import com.webrtc.model.Device;
 import com.webrtc.repository.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class DeviceServiceImpl implements DeviceService{
     private DeviceRepository deviceRepository;
 
     @Override
-    public Device addDevice(Device device) {
+    public Device addDevice(final Device device) {
         deviceRepository.save(device);
         return device;
     }
@@ -27,8 +27,7 @@ public class DeviceServiceImpl implements DeviceService{
     }
 
     @Override
-    public Optional<Device> findById(String deviceid) {
-        Optional<Device> device = deviceRepository.findOne(Example.of(new Device(deviceid, null)));
-        return device;
+    public Device findById(final String deviceid) {
+        return deviceRepository.findByDeviceId(deviceid).orElseThrow(() -> new DeviceNotFoundException("No device found with the given device id"));
     }
 }

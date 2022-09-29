@@ -9,5 +9,5 @@ public interface DeviceService {
 
     Device addDevice(Device device);
     List<Device> findAll();
-    Optional<Device> findById(String deviceid);
+    Device findById(String deviceid);
 }

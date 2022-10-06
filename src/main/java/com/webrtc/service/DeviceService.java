@@ -10,4 +10,5 @@ public interface DeviceService {
     Device addDevice(Device device);
     List<Device> findAll();
     Device findById(String deviceid);
+    Device updateDeviceDetails(Device device);
 }

@@ -29,7 +29,10 @@ public class WebrtcController {
     @GetMapping("/device/{deviceid}")
     public ResponseEntity<?> getDeviceById(@PathVariable("deviceid") String deviceid) {
         return ResponseEntity.ok(deviceService.findById(deviceid));
-        //Optional<Device> device = deviceService.findById(deviceid);
-        //return device.isPresent() ? ResponseEntity.ok(device.get()) : ResponseEntity.ok("Device id not found");
+    }
+
+    @PutMapping("/device")
+    public ResponseEntity<?> updateDeviceDetails(@RequestBody Device device) {
+        return ResponseEntity.ok(deviceService.updateDeviceDetails(device));
     }
 }

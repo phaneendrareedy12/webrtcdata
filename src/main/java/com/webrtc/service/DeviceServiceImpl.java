@@ -3,6 +3,7 @@ package com.webrtc.service;
 import com.webrtc.document.Device;
 import com.webrtc.document.DeviceDetailsAudit;
 import com.webrtc.dto.DeviceDto;
+import com.webrtc.exception.DeviceDetailsPresentException;
 import com.webrtc.exception.DeviceNotFoundException;
 import com.webrtc.mapper.DeviceMapper;
 import com.webrtc.repository.DeviceAuditRepository;
@@ -40,7 +41,20 @@ public class DeviceServiceImpl implements DeviceService{
     public Device addDevice(DeviceDto deviceDto) {
         Optional<Device> deviceFromDB = deviceRepository.findByDeviceId(deviceDto.getDeviceId());
         return deviceFromDB.isPresent() ?
-                updateDevice(deviceDto) : saveDevice(deviceDto);
+                CompareAndUpdateDevice(deviceDto, deviceFromDB.get()) : saveDevice(deviceDto);
+    }
+
+    private Device CompareAndUpdateDevice(DeviceDto deviceDto, Device deviceFromDB) {
+        if(checkDeviceInfo(deviceDto, deviceFromDB))
+            throw new DeviceDetailsPresentException("Device details are already present with given info");
+        return updateDevice(deviceDto);
+    }
+
+    private boolean checkDeviceInfo(DeviceDto deviceDto, Device deviceFromDB) {
+        if(deviceDto.getDeviceDetails().size() != deviceFromDB.getDeviceDetails().size())
+            return false;
+        return deviceDto.getDeviceDetails().entrySet().stream()
+                .allMatch(e -> e.getValue().equals(deviceFromDB.getDeviceDetails().get(e.getKey())));
     }
 
     private Device saveDevice(DeviceDto deviceDto) {

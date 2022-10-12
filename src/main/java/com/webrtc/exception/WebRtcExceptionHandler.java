@@ -42,4 +42,15 @@ public class WebRtcExceptionHandler {
                 request.getDescription(false));
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(DeviceDetailsPresentException.class)
+    public ResponseEntity<DeviceDetailsPresent> deviceDetailsPresent(DeviceDetailsPresentException ex, WebRequest request) {
+        DeviceDetailsPresent message = new DeviceDetailsPresent(
+                HttpStatus.ALREADY_REPORTED.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+
+        return new ResponseEntity<>(message, HttpStatus.ALREADY_REPORTED);
+    }
 }

@@ -1,6 +1,6 @@
 package com.webrtc.repository;
 
-import com.webrtc.model.Device;
+import com.webrtc.document.Device;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

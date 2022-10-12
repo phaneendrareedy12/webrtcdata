@@ -1,14 +1,16 @@
 package com.webrtc.service;
 
-import com.webrtc.model.Device;
+import com.webrtc.document.Device;
+import com.webrtc.document.DeviceDetailsAudit;
+import com.webrtc.dto.DeviceDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface DeviceService {
 
-    Device addDevice(Device device);
+    Device addDevice(DeviceDto device);
     List<Device> findAll();
     Device findById(String deviceid);
-    Device updateDeviceDetails(Device device);
+    Device updateDeviceDetails(DeviceDto device);
+    List<DeviceDetailsAudit> getDeviceAuditInfo(String deviceid);
 }

@@ -1,7 +1,11 @@
 package com.webrtc.service;
 
+import com.webrtc.document.Device;
+import com.webrtc.document.DeviceDetailsAudit;
+import com.webrtc.dto.DeviceDto;
 import com.webrtc.exception.DeviceNotFoundException;
-import com.webrtc.model.Device;
+import com.webrtc.mapper.DeviceMapper;
+import com.webrtc.repository.DeviceAuditRepository;
 import com.webrtc.repository.DeviceRepository;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.ObjectUtils;
@@ -12,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,10 +30,39 @@ public class DeviceServiceImpl implements DeviceService{
     @Autowired
     private DeviceRepository deviceRepository;
 
+    @Autowired
+    private DeviceAuditRepository deviceAuditRepository;
+
+    @Autowired
+    private DeviceMapper deviceMapper;
+
     @Override
-    public Device addDevice(final Device device) {
-        deviceRepository.save(device);
-        return device;
+    public Device addDevice(DeviceDto deviceDto) {
+        Optional<Device> deviceFromDB = deviceRepository.findByDeviceId(deviceDto.getDeviceId());
+        return deviceFromDB.isPresent() ?
+                updateDevice(deviceDto) : saveDevice(deviceDto);
+    }
+
+    private Device saveDevice(DeviceDto deviceDto) {
+        Device savedDevice = deviceRepository.save(deviceMapper.mapDeviceDtoToNewDeviceDocument(deviceDto));
+        saveDeviceAuditInfo(deviceDto);
+        return savedDevice;
+    }
+
+    private Device updateDevice(DeviceDto deviceDto) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("deviceId").is(deviceDto.getDeviceId()));
+        Update update = new Update();
+        update.set("deviceDetails", deviceDto.getDeviceDetails());
+        update.set("updatedTs", LocalDateTime.now());
+        Device updatedDeviceDtl = mongoTemplate.findAndModify(query, update, Device.class);
+        log.info("updated device details are : " + updatedDeviceDtl);
+        saveDeviceAuditInfo(deviceDto);
+        return updatedDeviceDtl;
+    }
+
+    private void saveDeviceAuditInfo(DeviceDto deviceDto) {
+        deviceAuditRepository.save(deviceMapper.mapDeviceDtoToDeviceDetailsAudit(deviceDto));
     }
 
     @Override
@@ -42,15 +76,24 @@ public class DeviceServiceImpl implements DeviceService{
     }
 
     @Override
-    public Device updateDeviceDetails(Device device) {
+    public Device updateDeviceDetails(DeviceDto device) {
         Query query = new Query();
         query.addCriteria(Criteria.where("deviceId").is(device.getDeviceId()));
         Update update = new Update();
         update.set("deviceDetails", device.getDeviceDetails());
+        update.set("updatedTs", LocalDateTime.now());
         Device updatedDeviceDtl = mongoTemplate.findAndModify(query, update, Device.class);
         log.info("updated device details are : " + updatedDeviceDtl);
         if(ObjectUtils.isEmpty(updatedDeviceDtl))
             throw new DeviceNotFoundException("There is no device with give id , So no update done");
-        return device;
+        return updatedDeviceDtl;
      }
+
+    @Override
+    public List<DeviceDetailsAudit> getDeviceAuditInfo(String deviceid) {
+        List<DeviceDetailsAudit> deviceDetailsAuditList = deviceAuditRepository.findByDeviceId(deviceid).get();
+        if(deviceDetailsAuditList.isEmpty())
+            throw new DeviceNotFoundException("No device found with the given device id");
+        return deviceDetailsAuditList;
+    }
 }

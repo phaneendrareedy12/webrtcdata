@@ -91,7 +91,8 @@ public class DeviceServiceImpl implements DeviceService{
 
     @Override
     public Device updateDeviceDetails(DeviceDto device) {
-        return addDevice(device);
+        Device deviceFromDB = findById(device.getDeviceId());
+        return compareAndUpdateDevice(device, deviceFromDB);
      }
 
     @Override

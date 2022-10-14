@@ -41,10 +41,10 @@ public class DeviceServiceImpl implements DeviceService{
     public Device addDevice(DeviceDto deviceDto) {
         Optional<Device> deviceFromDB = deviceRepository.findByDeviceId(deviceDto.getDeviceId());
         return deviceFromDB.isPresent() ?
-                CompareAndUpdateDevice(deviceDto, deviceFromDB.get()) : saveDevice(deviceDto);
+                compareAndUpdateDevice(deviceDto, deviceFromDB.get()) : saveDevice(deviceDto);
     }
 
-    private Device CompareAndUpdateDevice(DeviceDto deviceDto, Device deviceFromDB) {
+    private Device compareAndUpdateDevice(DeviceDto deviceDto, Device deviceFromDB) {
         if(checkDeviceInfo(deviceDto, deviceFromDB))
             throw new DeviceDetailsPresentException("Device details are already present with given info");
         return updateDevice(deviceDto);
@@ -72,7 +72,7 @@ public class DeviceServiceImpl implements DeviceService{
         Device updatedDeviceDtl = mongoTemplate.findAndModify(query, update, Device.class);
         log.info("updated device details are : " + updatedDeviceDtl);
         saveDeviceAuditInfo(deviceDto);
-        return updatedDeviceDtl;
+        return deviceRepository.findByDeviceId(deviceDto.getDeviceId()).get();
     }
 
     private void saveDeviceAuditInfo(DeviceDto deviceDto) {
@@ -91,16 +91,7 @@ public class DeviceServiceImpl implements DeviceService{
 
     @Override
     public Device updateDeviceDetails(DeviceDto device) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("deviceId").is(device.getDeviceId()));
-        Update update = new Update();
-        update.set("deviceDetails", device.getDeviceDetails());
-        update.set("updatedTs", LocalDateTime.now());
-        Device updatedDeviceDtl = mongoTemplate.findAndModify(query, update, Device.class);
-        log.info("updated device details are : " + updatedDeviceDtl);
-        if(ObjectUtils.isEmpty(updatedDeviceDtl))
-            throw new DeviceNotFoundException("There is no device with give id , So no update done");
-        return updatedDeviceDtl;
+        return addDevice(device);
      }
 
     @Override

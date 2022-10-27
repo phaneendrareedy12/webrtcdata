@@ -1,12 +1,14 @@
 package com.webrtc.controller;
 
+import com.webrtc.document.Device;
+import com.webrtc.document.DeviceDetailsAudit;
 import com.webrtc.dto.DeviceDto;
 import com.webrtc.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/webrtc")
@@ -16,27 +18,27 @@ public class WebrtcController {
     private DeviceService deviceService;
 
     @PostMapping("/device")
-    public ResponseEntity<?> addDevice(@Valid @RequestBody DeviceDto device) {
-        return ResponseEntity.ok(deviceService.addDevice(device));
+    public Device addDevice(@Valid @RequestBody DeviceDto device) {
+        return deviceService.addDevice(device);
     }
 
     @GetMapping("/devices")
-    public ResponseEntity<?> getAllDevices() {
-        return ResponseEntity.ok(deviceService.findAll());
+    public List<Device> getAllDevices() {
+        return deviceService.findAll();
     }
 
     @GetMapping("/device/{deviceid}")
-    public ResponseEntity<?> getDeviceById(@PathVariable("deviceid") String deviceid) {
-        return ResponseEntity.ok(deviceService.findById(deviceid));
+    public Device getDeviceById(@PathVariable("deviceid") String deviceid) {
+        return deviceService.findById(deviceid);
     }
 
     @PutMapping("/device")
-    public ResponseEntity<?> updateDeviceDetails(@RequestBody DeviceDto device) {
-        return ResponseEntity.ok(deviceService.updateDeviceDetails(device));
+    public Device updateDeviceDetails(@RequestBody DeviceDto device) {
+        return deviceService.updateDeviceDetails(device);
     }
 
     @GetMapping("/audit/device/{deviceid}")
-    public ResponseEntity<?> getDeviceAuditInfo(@PathVariable("deviceid") String deviceid) {
-        return ResponseEntity.ok(deviceService.getDeviceAuditInfo(deviceid));
+    public List<DeviceDetailsAudit> getDeviceAuditInfo(@PathVariable("deviceid") String deviceid) {
+        return deviceService.getDeviceAuditInfo(deviceid);
     }
 }

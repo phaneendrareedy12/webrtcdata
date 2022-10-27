@@ -9,7 +9,6 @@ import com.webrtc.mapper.DeviceMapper;
 import com.webrtc.repository.DeviceAuditRepository;
 import com.webrtc.repository.DeviceRepository;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;

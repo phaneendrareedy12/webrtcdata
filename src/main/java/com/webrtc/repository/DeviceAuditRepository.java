@@ -1,6 +1,5 @@
 package com.webrtc.repository;
 
-import com.webrtc.document.Device;
 import com.webrtc.document.DeviceDetailsAudit;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

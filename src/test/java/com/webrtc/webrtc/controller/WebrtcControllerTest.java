@@ -65,12 +65,12 @@ public class WebrtcControllerTest {
                 .andExpect(jsonPath("$[1].deviceId", is("samsung")));
     }
 
-    @DisplayName("unit test for get device by id api (/webrtc/audit/device/{deviceid})")
+    @DisplayName("unit test for get device by id api (/webrtc/device/{deviceid})")
     @Test
     public void testGetDeviceById() throws Exception {
         when(deviceService.findById("samsung")).thenReturn(getDeviceMockData());
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/webrtc/audit/device/samsung")
+                        .get("/webrtc/device/samsung")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", notNullValue()));
